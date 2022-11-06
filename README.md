@@ -1,6 +1,6 @@
 # PR_1_MovieScrapper
 
-autores:
+Autores:
 - Clara Matilde Roca de la Concha
 - Victor Ayala Sánchez
 
