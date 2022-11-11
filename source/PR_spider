@@ -1,4 +1,3 @@
-
 import scrapy
 from scrapy.crawler import CrawlerProcess
 import pandas
@@ -7,28 +6,27 @@ from scrapy.item import Item, Field
 import time
 import random
 
-# Creamos la araña.
-class uoc_spider(scrapy.Spider):
+# Create spider
+class movies_spider(scrapy.Spider):
 
-    # Asignamos un nombre a la araña.
-    name = "uoc_spider"
+    # Assign name to spider
+    name = "movies_spider"
 
-    # Indicamos la url que queremos analizar en primer lugar.
     start_urls = [
         "https://en.wikipedia.org/wiki/List_of_Academy_Award-winning_films"
     ]
-
+    
+    # Output
     custom_settings = {
         'FEEDS': { 'data_wiki.json': {'format': 'json', 'overwrite': True, 'encofing':'utf-8'}}
         }
 
-           # Definimos el analizador.
-            
+          
+    # Extract film info from first URL        
     def parse(self, response):
-        # Extraemos la info de la película
         for name in response.xpath('//table[@class="wikitable sortable"]//tr'):
             time.sleep(random.uniform(0.20, 0.70))
-            # Capturamos las películas ganadoras
+            # Was this movie the Best Film winner?
             if name.xpath('.//b').get() is not None:
                 best_movie = True
             else:
@@ -43,14 +41,14 @@ class uoc_spider(scrapy.Spider):
 
             }       
         
-        # Iteramos sobre los links
+        # Iterate over each movie link
         for item in response.xpath('//table[@class = "wikitable sortable"]//i//a/@href'):
             time.sleep(random.uniform(0.20, 0.70))
             if item is not None:
                 yield response.follow(item.get(), callback=self.parse_movies)
                 
             
-     # Capturamos la información de cada película
+    # Movie details
     def parse_movies(self, response):
         response_type = ['"Directed"', '"Screenplay"', 
                          '"Starring"', '"Produced"', 
@@ -73,7 +71,7 @@ class uoc_spider(scrapy.Spider):
 
 
 
-        # Links de los actores
+        # Get all available URLs for the cast
         path_template = '//table[@class="infobox vevent"]//th[contains(text(), "Starring")]/following-sibling::td'
         if response.xpath(path_template+'//ul').get() is not None:
             path_template = path_template+'//li'
@@ -84,11 +82,11 @@ class uoc_spider(scrapy.Spider):
                 time.sleep(random.uniform(0.20, 0.70))
                 
             
-     # Capturamos la información de cada persona
+     # Get cast details
     def parse_cast(self, response):
         time.sleep(random.uniform(0.20, 0.70))
         
-        # Loop para determinar el género de la persona
+        # Is this person a woman?
         females_sum = 0
         males_sum = 0
         female_list = ['" her "', '"Her "', 
@@ -100,7 +98,6 @@ class uoc_spider(scrapy.Spider):
                      '" he "', '"He "', 
                      '" male "', 
                      '" man "']
-
         
         if response.xpath('//div[@class="catlinks"]//a[contains(text(), "women") or contains(text(), "actresses") or contains(text(), "females")]').get() is not None:
             female = True
@@ -141,7 +138,7 @@ if __name__ == "__main__":
                 })
 
 # Inicializamos el crawler con nuestra araña.
-process.crawl(uoc_spider)
+process.crawl(movies_spider)
 
                 # Lanzamos la araña
 process.start()
