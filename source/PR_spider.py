@@ -58,17 +58,24 @@ class movies_spider(scrapy.Spider):
                          "'Language'", "'Budget'",
                          "'Box office'"
                         ]
+
+        # Dict with movie name + link
+        dict_movie = {'movie': response.xpath('//h1[@id="firstHeading"]/i/text()').get(),
+                     'link': response.request.url}
+        
+        # Gather all response_type info in URL
         for tipo in response_type:
-            path_template = '//table[@class="infobox vevent"]//th[contains(text(), {})]/following-sibling::td'.format(tipo)
+            path_template = '//table[@class="infobox vevent"]//th[contains(., {})]/following-sibling::td'.format(tipo)
+            crew = []
             if response.xpath(path_template+'//ul').get() is not None:
                 path_template = path_template+'//li'
             for name in response.xpath(path_template):
-                yield {'movie': response.xpath('//h1[@id="firstHeading"]/i/text()').get(),
-                       tipo: name.xpath('.//text()').get(),
-                       'link': response.request.url,
-                    }
+                crew.append(name.xpath('.//text()').get())
+            dict_movie[tipo] = crew
+            time.sleep(random.uniform(0.20, 0.70))
 
-
+        # Yield full dictionary   
+        yield dict_movie
 
         # Get all available URLs for the cast
         path_template = '//table[@class="infobox vevent"]//th[contains(text(), "Starring")]/following-sibling::td'
