@@ -37,8 +37,7 @@ class movies_spider(scrapy.Spider):
                'awards': name.xpath('(./td)[3]/text()').get(),
                'nominations': name.xpath('(./td)[4]/text()').get(),
                'linkMovie': str(name.xpath('.//i//a/@href').get())
-
-            }       
+            }   
         
         # Iterate over each movie link
         for item in response.xpath('//table[@class = "wikitable sortable"]//i//a/@href'):
@@ -46,26 +45,36 @@ class movies_spider(scrapy.Spider):
             if item is not None:
                 yield response.follow(item.get(), callback=self.parse_movies)
                 
-            
-    # Movie details
+    # Movie details      
     def parse_movies(self, response):
-        response_type = ['"Directed"', '"Screenplay"', 
-                         '"Starring"', '"Produced"', 
-                         "'Cinematography'", "'Edited'",
-                         "'Music'", "'Production company'",
-                         "'Distributed'", "'Release dates'",
-                         "'Running time'", "'Country'",
-                         "'Language'", "'Budget'",
-                         "'Box office'"
-                        ]
-
-        # Dict with movie name + link
+        # Is this a documentary film?
+        if response.xpath('//div[@class="catlinks"]') is None:
+            documentary = None  
+        elif response.xpath('//div[@class="catlinks"]//a[contains(text(), "documentary") or contains(text(), "Documentary")]').get() is not None:
+            documentary = True
+        else:
+            documentary = False
+        
+        # Dict with movie name + link + documentary
         dict_movie = {'movie': response.xpath('//h1[@id="firstHeading"]/i/text()').get(),
-                     'link': response.request.url}
+                     'link': response.request.url, 
+                      'documentary': documentary
+                     }
+        
+                # Information we'll get
+        response_type = ['Directed', 'Screenplay', 
+                         'Starring', 'Produced', 
+                         'Cinematography', 'Edited',
+                         'Music', 'Production',
+                         'Distributed', 'Release dates',
+                         'Running time', 'Countr',
+                         'Language', 'Budget',
+                         'Box office'
+                        ]
         
         # Gather all response_type info in URL
         for tipo in response_type:
-            path_template = '//table[@class="infobox vevent"]//th[contains(., {})]/following-sibling::td'.format(tipo)
+            path_template = '//table[@class="infobox vevent"]//th[contains(., "{}")]/following-sibling::td'.format(tipo)
             crew = []
             if response.xpath(path_template+'//ul').get() is not None:
                 path_template = path_template+'//li'
