@@ -1,3 +1,5 @@
+## FROM GITHUB
+
 import scrapy
 from scrapy.crawler import CrawlerProcess
 import json
@@ -45,7 +47,7 @@ class movies_spider(scrapy.Spider):
             if item is not None:
                 yield response.follow(item.get(), callback=self.parse_movies)
                 
-    # Movie details      
+            
     def parse_movies(self, response):
         # Is this a documentary film?
         if response.xpath('//div[@class="catlinks"]') is None:
@@ -66,7 +68,7 @@ class movies_spider(scrapy.Spider):
                          'Starring', 'Produced', 
                          'Cinematography', 'Edited',
                          'Music', 'Production',
-                         'Distributed', 'Release dates',
+                         'Distributed', 'Release date',
                          'Running time', 'Countr',
                          'Language', 'Budget',
                          'Box office'
@@ -134,12 +136,11 @@ class movies_spider(scrapy.Spider):
                 female = False
             else:
                 female = 'NA'
-
             
-        yield {'name': response.xpath('//table[@class="infobox biography vcard"]//tr//div[@class="fn"]/text()').get(),
+        yield {'name': response.xpath('//h1[@id="firstHeading"]//text()').get(),
                'female': female,
-              'birthdate': response.xpath('//table[@class="infobox biography vcard"]//tr//span[@class="bday"]/text()').get(),
-               'birthplace': response.xpath('//table[@class="infobox biography vcard"]//tr//div[@class="birthplace"]//text()').getall(),
+              'birthdate': response.xpath('//span[@class="bday"]/text()').get(),
+               'birthplace': response.xpath('//div[@class="birthplace"]//text()').getall(),
                'link': response.request.url
               }
                      
