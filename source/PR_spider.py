@@ -1,5 +1,3 @@
-## FROM GITHUB
-
 import scrapy
 from scrapy.crawler import CrawlerProcess
 import json
