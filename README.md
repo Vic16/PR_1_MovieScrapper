@@ -5,7 +5,7 @@ Autores:
 - Victor Ayala Sánchez
 
 El presente repositorio contiene los ficheros que corresponden al proyecto de la primer práctica.
-A continuación se describe la estructura del proyecto:
+A continuación se describe la estructura del mismo:
 
 ### Source
 En este subdirectorio encontraremos los ficheros correspondientes al desarrollo realizado para la captura de datos y el output correspondiente, sin ningún tipo de limpieza.
