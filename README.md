@@ -21,7 +21,7 @@ En este subdirectorio se tiene los ficheros que componen el conjunto de datos.
 - df_metamovies.csv, contiene información extra de las películas: dirección, guión, presupuesto, etc.
 - df_movies, tiene la información sobre las películas nominadas a los premios de la academia.
 
-El conjunto de datos también se encuentra publicado en el siguiente enlace de [Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.7328744.svg)](https://doi.org/10.5281/zenodo.7328744)
+El conjunto de datos también se encuentra publicado en el siguiente enlace de [Zenodo](https://doi.org/10.5281/zenodo.7328744)
 
 ### Directorio Raíz
 - DataClean.ipynb, se trata de un notebook donde se procesa el json del directorio Source y se transforman los datos en tres tablas que conforman el conjunto de datos.
